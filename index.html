@@ -106,7 +106,7 @@ textarea{width:100%;min-height:140px;font:16px/1.5 Archivo,sans-serif;padding:12
 </head>
 <body>
 <header class="top">
-  <div class="brand"><h1 id="ttl">MY PROGRAMS</h1><span><button class="hbtn" data-act="home" id="pb">Programs</button><button class="hbtn" data-act="hist" id="hb">History</button></span></div>
+  <div class="brand"><h1 id="ttl">STEF PROGRAMS</h1><span><button class="hbtn" data-act="home" id="pb">Programs</button><button class="hbtn" data-act="hist" id="hb">History</button></span></div>
   <nav class="week" id="week" aria-label="Days of the week"></nav>
 </header>
 <main class="wrap" id="main"></main>
@@ -250,7 +250,7 @@ const flex=i=>{const d=DAYS[i][1];return d==='fri'||!d};const keyOf=i=>flex(i)?(
 function prog(i){const k=keyOf(i);if(!k||k==='own'||!W[k])return null;let a=0,b=0;W[k].c.forEach((c,ci)=>c.it.forEach((x,ii)=>{b+=c.r;a+=Math.min(c.r,Q.ticks[i+'-'+ci+'-'+ii]||0)}));return b?a/b:0}
 function week(){
  document.getElementById('hb').classList.toggle('on',view==='hist');document.getElementById('pb').classList.toggle('on',view==='home');
- document.getElementById('ttl').textContent=view==='day'?PROGS[S.prog].name.toUpperCase():view==='hist'?'HISTORY':'MY PROGRAMS';
+ document.getElementById('ttl').textContent=view==='day'?PROGS[S.prog].name.toUpperCase():view==='hist'?'HISTORY':'STEF PROGRAMS';
  document.getElementById('week').style.display=view==='day'?'':'none';
 const lab=i=>{const d=DAYS[i][1];if(Q.done[i])return '✓ Done';if(!flex(i))return SH(d);const p=Q.pick[i];return p?SH(p):(d?'Free':'Rest')};
  document.getElementById('week').innerHTML=DAYS.map(([d,k],i)=>`<button class="dy ${view==='day'&&i===cur?'on':''} ${!k&&!Q.pick[i]?'rest':''} ${i===todayIdx?'today':''}" data-day="${i}" aria-pressed="${view==='day'&&i===cur}"><b>${d}</b><i>${lab(i)}</i></button>`).join('');
