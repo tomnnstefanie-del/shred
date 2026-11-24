@@ -126,9 +126,9 @@ const T=(n,s)=>({n,s}),E=(n,r)=>({n,r});
 const W1={
 legs:{name:'Shred – Legs & Glutes 1',min:58,eq:['Foam roller','Bands','Bench','Kettlebell','Plates','Cable','Dumbbells','Resistance band','Treadmill'],c:[
  {r:1,it:[T('Foam roll quads',60),T('Foam roll T-spine',60),T('Foam roll glutes',60),T('Foam roll hamstrings',60),T('Foam roll calves',60),E('Giant forward & reverse circles – left',10),E('Giant forward & reverse circles – right',10),E('Banded glute bridges',20),E('Banded clam – left',15),E('Banded kickbacks – left',15),E('Banded clam – right',15),E('Banded kickbacks – right',15),E('QL side bend stretch – left',10),E('QL side bend stretch – right',10),E('Dead bug hip thrust prep – left',10),E('Dead bug hip thrust prep – right',10)]},
- {r:3,rest:90,it:[E('Kettlebell deadlift',12),E('Leg extension (machine)',12)]},
+ {r:3,rest:90,it:[E('Kettlebell deadlift',12),E('Leg extension (machine)',10)]},
  {r:3,rest:90,note:'Bulgarian split squats: long stride, lean your chest slightly forward, front knee tracking over your toes. This puts the work on your glutes and is easier on the knees.',it:[E('Plate elevated sumo squats',12),E('Bulgarian split squat – left',10),E('Bulgarian split squat – right',10)]},
- {r:3,rest:60,it:[E('Leg curl (machine)',12),E('Bench band abductions',30)]},
+ {r:3,rest:60,it:[E('Leg curl (machine)',10),E('Bench band abductions',30)]},
  {r:1,it:[T('Treadmill incline walk – 4.8 km/h, incline 5',600)]},
  {r:1,it:[T('Pigeon stretch',60),T('Lower back stretch',60),T('Hip flexor / psoas stretch',60),T('Puppy dog stretch',60)]}]},
 arms:{name:'Shred – Arms Back Abs 1',min:55,eq:['Foam roller','Medicine ball','Jump rope','Cable','Bench','Dumbbells'],c:[
@@ -158,9 +158,9 @@ const DAYS1=[['Mon','legs'],['Tue','arms'],['Wed','cardio'],['Thu',null],['Fri',
 const W2={
 legs:{name:'Shred – Legs & Glutes 2',short:'Legs',min:59,eq:['Foam roller','Bench','Resistance band','Kettlebell','Plates','Cable','Dumbbells','Treadmill'],c:[
  {r:1,it:[T('Foam roll quads',60),T('Foam roll T-spine',60),T('Foam roll glutes',60),T('Foam roll hamstrings',60),T('Foam roll calves',60),E('Giant forward & reverse circles – left',10),E('Giant forward & reverse circles – right',10),E('QL side bend stretch – left',10),E('QL side bend stretch – right',10)]},
- {r:3,rest:90,it:[E('Leg curl (machine)',12),E('Double band abductions',20)]},
+ {r:3,rest:90,it:[E('Leg curl (machine)',10),E('Double band abductions',20)]},
  {r:3,rest:90,it:[E('Plate elevated sumo squats',12),E('Kettlebell deadlift',12)]},
- {r:3,rest:90,note:'Bulgarian split squats: long stride, lean your chest slightly forward, front knee tracking over your toes. This puts the work on your glutes and is easier on the knees.',it:[E('Bulgarian split squat – left',10),E('Bulgarian split squat – right',10),E('Leg extension (machine)',12)]},
+ {r:3,rest:90,note:'Bulgarian split squats: long stride, lean your chest slightly forward, front knee tracking over your toes. This puts the work on your glutes and is easier on the knees.',it:[E('Bulgarian split squat – left',10),E('Bulgarian split squat – right',10),E('Leg extension (machine)',10)]},
  {r:1,it:[E('Bench donkey kick burnout – left',25),E('Bench donkey kick burnout – right',25),T('Treadmill incline walk – 4.8 km/h, incline 5',600)]},
  {r:1,it:[T('Pigeon stretch',60),T('Lower back stretch',60),T('Hip flexor / psoas stretch',60),T('Puppy dog stretch',60)]}]},
 arms:{name:'Shred – Arms Back Abs 2',short:'Arms',min:54,eq:['Foam roller','Medicine ball','Jump rope','Cable','Bench','Dumbbells'],c:[
@@ -182,8 +182,8 @@ const H=(name,short,min,eq)=>({name,short,min,eq,video:true,c:[]});
 const WH={
  glutes:{name:'Go To Glutes',short:'Glutes',min:50,eq:['Mat','Bench','Kettlebell','Foam roller','Bands','Plates','Stairmaster'],c:[
   {r:1,it:[T('Foam roll quads',60),T('Foam roll glutes',60),T('Foam roll hamstrings',60),T('Foam roll calves',60),E('Glute bridges',15),E('Clamshell – left',15),E('Glute bridges',15),E('Clamshell – right',15)]},
-  {r:3,rest:90,note:'Go heavy on the kettlebell. The last reps should be hard.',it:[E('Kettlebell deadlift',10),E('Single leg hip thrust – left',10),E('Single leg hip thrust – right',10),E('Elevated sumo squat',10),E('Elevated curtsy lunge – left',10),E('Elevated curtsy lunge – right',10)]},
-  {r:3,rest:30,it:[E('Bench frog pump',12),E('Elevated hamstring glute bridges',10)]},
+  {r:3,rest:90,note:'Go heavy on the kettlebell. The last reps should be hard.',it:[E('Kettlebell deadlift',10),E('Leg extension (machine)',10),E('Elevated sumo squat',10),E('Elevated curtsy lunge – left',10),E('Elevated curtsy lunge – right',10)]},
+  {r:3,rest:60,it:[E('Leg curl (machine)',10)]},
   {r:1,it:[T('Stairmaster',600)]},
   {r:1,it:[T('Pigeon stretch',60),T('Cat cow',60),T('Lower back stretch',60)]}]},
  cablefb:{name:'Cable Full Body Strength',short:'Cable',min:50,eq:['Foam roller','Bands','Cable','Treadmill'],c:[
@@ -197,7 +197,7 @@ const WH={
   {r:1,it:[T('Foam roll T-spine',40),T('Foam roll angel stretch',40),T('Foam roll int/ext rotation',40),T('T-spine opener',40),E('Glute bridges',10),E('Dead bug',10),E('Glute bridges',10),E('Resisted dead bug',10)]},
   {r:3,rest:60,it:[E('Split stance RDL – left',10),E('Split stance RDL – right',10),E('Elevated reverse lunge – left',10),E('Elevated reverse lunge – right',10),E('Elevated sumo squat',10)]},
   {r:3,rest:60,it:[E('Bent over row – left',10),E('Bent over row – right',10),E('Single arm chest press – right',10),E('Single arm chest press – left',10),E('Weighted dead bug',20)]},
-  {r:3,rest:60,it:[E('Tricep dips',10),E('Bench push-up with knee drive',10),E('Bench frog pump',15)]},
+  {r:3,rest:60,it:[E('Tricep dips',10),E('Bench push-up with knee drive',10),E('Leg curl (machine)',10)]},
   {r:1,it:[T('Chest stretch',40),T('Hip flexor / psoas stretch',60),T('Lower back stretch',60)]}]},
  fbb2:{name:'Full Body Burn 2.0',short:'Burn 2',min:60,eq:['Foam roller','Bands','Kettlebell','Plates','Bench','Heavy dumbbell'],c:[
   {r:1,it:[T('Foam roll quads',60),T('Foam roll T-spine',60),T('Foam roll glutes',60),T('Foam roll hamstrings',60),T('Foam roll calves',60),E('Banded glute bridges',20),E('Banded clam – left',15),E('Banded kickbacks – left',15),E('Banded clam – right',15),E('Banded kickbacks – right',15)]},
@@ -340,7 +340,7 @@ function histView(){
 function homeView(){
  const last=S.hist[0];
  let h=`<h2>Programs</h2><p class="meta">Pick the program you're doing. Your history keeps every program's workouts together.</p>`;
- setTimeout(()=>{const v=document.getElementById('ver');if(v)v.textContent='App version 11'},0);
+ setTimeout(()=>{const v=document.getElementById('ver');if(v)v.textContent='App version 12'},0);
  if(last)h+=`<p class="meta">Last workout: <b>${new Date(last.date).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</b> · ${esc(last.name)}${last.dur?' · '+fmtDur(last.dur):''}</p>`;
  h+=`<div class="pick">`+Object.entries(PROGS).map(([id,pr])=>{
   if(pr.soon)return `<button disabled style="opacity:.55"><b>${pr.name}</b><span>${pr.desc}</span></button>`;
