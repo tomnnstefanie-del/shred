@@ -126,9 +126,9 @@ const T=(n,s)=>({n,s}),E=(n,r)=>({n,r});
 const W1={
 legs:{name:'Shred – Legs & Glutes 1',min:58,eq:['Foam roller','Bands','Bench','Kettlebell','Plates','Cable','Dumbbells','Resistance band','Treadmill'],c:[
  {r:1,it:[T('Foam roll quads',60),T('Foam roll T-spine',60),T('Foam roll glutes',60),T('Foam roll hamstrings',60),T('Foam roll calves',60),E('Giant forward & reverse circles – left',10),E('Giant forward & reverse circles – right',10),E('Banded glute bridges',20),E('Banded clam – left',15),E('Banded kickbacks – left',15),E('Banded clam – right',15),E('Banded kickbacks – right',15),E('QL side bend stretch – left',10),E('QL side bend stretch – right',10),E('Dead bug hip thrust prep – left',10),E('Dead bug hip thrust prep – right',10)]},
- {r:3,rest:90,it:[E('Single leg hip thrust – left',12),E('Single leg hip thrust – right',12),E('Kettlebell deadlift',12)]},
+ {r:3,rest:90,it:[E('Kettlebell deadlift',12),E('Leg extension (machine)',12)]},
  {r:3,rest:90,note:'Bulgarian split squats: long stride, lean your chest slightly forward, front knee tracking over your toes. This puts the work on your glutes and is easier on the knees.',it:[E('Plate elevated sumo squats',12),E('Bulgarian split squat – left',10),E('Bulgarian split squat – right',10)]},
- {r:3,rest:60,it:[E('Weighted glute bridges',15),E('Bench band abductions',30)]},
+ {r:3,rest:60,it:[E('Leg curl (machine)',12),E('Bench band abductions',30)]},
  {r:1,it:[T('Treadmill incline walk – 4.8 km/h, incline 5',600)]},
  {r:1,it:[T('Pigeon stretch',60),T('Lower back stretch',60),T('Hip flexor / psoas stretch',60),T('Puppy dog stretch',60)]}]},
 arms:{name:'Shred – Arms Back Abs 1',min:55,eq:['Foam roller','Medicine ball','Jump rope','Cable','Bench','Dumbbells'],c:[
@@ -158,9 +158,9 @@ const DAYS1=[['Mon','legs'],['Tue','arms'],['Wed','cardio'],['Thu',null],['Fri',
 const W2={
 legs:{name:'Shred – Legs & Glutes 2',short:'Legs',min:59,eq:['Foam roller','Bench','Resistance band','Kettlebell','Plates','Cable','Dumbbells','Treadmill'],c:[
  {r:1,it:[T('Foam roll quads',60),T('Foam roll T-spine',60),T('Foam roll glutes',60),T('Foam roll hamstrings',60),T('Foam roll calves',60),E('Giant forward & reverse circles – left',10),E('Giant forward & reverse circles – right',10),E('QL side bend stretch – left',10),E('QL side bend stretch – right',10)]},
- {r:3,rest:90,it:[E('Double band abductions',20),E('Single leg hip thrust – left',10),E('Dead bug hip thrust – left',10),E('Single leg hip thrust – right',10),E('Dead bug hip thrust – right',10)]},
+ {r:3,rest:90,it:[E('Leg curl (machine)',12),E('Double band abductions',20)]},
  {r:3,rest:90,it:[E('Plate elevated sumo squats',12),E('Kettlebell deadlift',12)]},
- {r:3,rest:90,note:'Bulgarian split squats: long stride, lean your chest slightly forward, front knee tracking over your toes. This puts the work on your glutes and is easier on the knees.',it:[E('Bulgarian split squat – left',10),E('Bulgarian split squat – right',10),E('Weighted glute bridges',15)]},
+ {r:3,rest:90,note:'Bulgarian split squats: long stride, lean your chest slightly forward, front knee tracking over your toes. This puts the work on your glutes and is easier on the knees.',it:[E('Bulgarian split squat – left',10),E('Bulgarian split squat – right',10),E('Leg extension (machine)',12)]},
  {r:1,it:[E('Bench donkey kick burnout – left',25),E('Bench donkey kick burnout – right',25),T('Treadmill incline walk – 4.8 km/h, incline 5',600)]},
  {r:1,it:[T('Pigeon stretch',60),T('Lower back stretch',60),T('Hip flexor / psoas stretch',60),T('Puppy dog stretch',60)]}]},
 arms:{name:'Shred – Arms Back Abs 2',short:'Arms',min:54,eq:['Foam roller','Medicine ball','Jump rope','Cable','Bench','Dumbbells'],c:[
@@ -340,7 +340,7 @@ function histView(){
 function homeView(){
  const last=S.hist[0];
  let h=`<h2>Programs</h2><p class="meta">Pick the program you're doing. Your history keeps every program's workouts together.</p>`;
- setTimeout(()=>{const v=document.getElementById('ver');if(v)v.textContent='App version 10'},0);
+ setTimeout(()=>{const v=document.getElementById('ver');if(v)v.textContent='App version 11'},0);
  if(last)h+=`<p class="meta">Last workout: <b>${new Date(last.date).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</b> · ${esc(last.name)}${last.dur?' · '+fmtDur(last.dur):''}</p>`;
  h+=`<div class="pick">`+Object.entries(PROGS).map(([id,pr])=>{
   if(pr.soon)return `<button disabled style="opacity:.55"><b>${pr.name}</b><span>${pr.desc}</span></button>`;
