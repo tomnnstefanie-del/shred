@@ -136,7 +136,7 @@ arms:{name:'Shred – Arms Back Abs 1',min:55,eq:['Foam roller','Medicine ball',
  {r:1,rest:30,it:[T('Jump rope',180)]},
  {r:3,rest:90,it:[E('Half kneeling face pull',12)]},
  {r:3,rest:90,it:[E('Forearm bench row – left',10),E('Forearm bench row – right',10),E('Tate press – left',10),E('Tate press – right',10),E('Bench hip lifts',10)]},
- {r:3,rest:60,it:[E('Chest supported dumbbell row',12),E('Y raises',12),E('Dumbbell external rotations',12)]},
+ {r:3,rest:60,it:[E('Chest supported dumbbell row',12),E('Y raises',12),E('Dumbbell lateral raises',12),E('Dumbbell external rotations',12)]},
  {r:3,rest:60,note:'Added by you – triceps',it:[E('Side-lying tricep push-up – left',10),E('Side-lying tricep push-up – right',10),E('Tricep extensions',12)]},
  {r:3,rest:60,note:'Added by you – back',it:[E('Seated cable pulldown (sit on the floor)',12),E('Gorilla rows',16)]},
  {r:1,it:[T('Chest stretch',60),T('Lower back stretch',60),T('Puppy dog stretch',60)]}]},
@@ -168,7 +168,7 @@ arms:{name:'Shred – Arms Back Abs 2',short:'Arms',min:54,eq:['Foam roller','Me
  {r:1,rest:30,it:[T('Jump rope',180)]},
  {r:3,rest:90,it:[E('Face pulls',12),E('Straight arm cable pull downs',12),E('Single arm cross body cable tricep extension – right',12),E('Single arm cross body cable tricep extension – left',12)]},
  {r:3,rest:90,it:[E('DB bird dog row – right',10),E('DB bird dog row – left',10),E('Skull crusher combo – right',10),E('Skull crusher combo – left',10),E('Hip lift dead bug',10)]},
- {r:3,rest:60,it:[E('Y raises',12),E('Dumbbell external rotations',12),E('Wall push dead bug',20)]},
+ {r:3,rest:60,it:[E('Y raises',12),E('Dumbbell lateral raises',12),E('Dumbbell external rotations',12),E('Wall push dead bug',20)]},
  {r:1,it:[T('Chest stretch',60),T('Lower back stretch',60),T('Puppy dog stretch',60)]}]},
 cardio:W1.cardio,
 full:{name:'Shred – Full Body Strength 2',short:'Full',min:61,eq:['Foam roller','Bench','Resistance band','Cable','Dumbbells','Treadmill'],c:[
@@ -340,7 +340,7 @@ function histView(){
 function homeView(){
  const last=S.hist[0];
  let h=`<h2>Programs</h2><p class="meta">Pick the program you're doing. Your history keeps every program's workouts together.</p>`;
- setTimeout(()=>{const v=document.getElementById('ver');if(v)v.textContent='App version 12'},0);
+ setTimeout(()=>{const v=document.getElementById('ver');if(v)v.textContent='App version 13'},0);
  if(last)h+=`<p class="meta">Last workout: <b>${new Date(last.date).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</b> · ${esc(last.name)}${last.dur?' · '+fmtDur(last.dur):''}</p>`;
  h+=`<div class="pick">`+Object.entries(PROGS).map(([id,pr])=>{
   if(pr.soon)return `<button disabled style="opacity:.55"><b>${pr.name}</b><span>${pr.desc}</span></button>`;
