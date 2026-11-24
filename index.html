@@ -268,8 +268,8 @@ function week(){
  document.getElementById('hb').classList.toggle('on',view==='hist');document.getElementById('pb').classList.toggle('on',view==='home');
  document.getElementById('ttl').textContent=view==='day'?PROGS[S.prog].name.toUpperCase():view==='hist'?'HISTORY':'STEF PROGRAMS';
  document.getElementById('week').style.display=view==='day'?'':'none';
-const lab=i=>{const d=DAYS[i][1];if(Q.done[i])return '✓ Done';const p=Q.pick[i];if(p)return SH(p);return d==='fri'?'Free':d?SH(d):'Rest'};
- document.getElementById('week').innerHTML=DAYS.map(([d,k],i)=>`<button class="dy ${view==='day'&&i===cur?'on':''} ${!k&&!Q.pick[i]?'rest':''} ${i===todayIdx?'today':''}" data-day="${i}" aria-pressed="${view==='day'&&i===cur}"><b>${d}</b><i>${lab(i)}</i></button>`).join('');
+const lab=i=>{const d=DAYS[i][1];if(Q.done[i])return '✓ Done';const p=Q.pick[i];if(p)return p==='rest'?'Rest':SH(p);return d==='fri'?'Free':d?SH(d):'Rest'};
+ document.getElementById('week').innerHTML=DAYS.map(([d,k],i)=>`<button class="dy ${view==='day'&&i===cur?'on':''} ${(!k&&!Q.pick[i])||Q.pick[i]==='rest'?'rest':''} ${i===todayIdx?'today':''}" data-day="${i}" aria-pressed="${view==='day'&&i===cur}"><b>${d}</b><i>${lab(i)}</i></button>`).join('');
 }
 function workout(i,k){
  const w=W[k],p=prog(i)||0;
@@ -302,7 +302,8 @@ function own(i){return `<h2>${FULL[i]} – your own session</h2><p class="meta">
 function picker(i){const d=DAYS[i][1],rest=!d,planned=d&&d!=='fri',nx=upNext(),r=rot(),keys=[...r,...Object.keys(W).filter(k=>!r.includes(k))];
  return `<h2>${rest?'Add a workout to '+FULL[i]:planned?'Swap '+FULL[i]+"'s workout":FULL[i]+' – your choice'}</h2><p class="meta">${planned?'Missed a day? Pick the one you want to do today.':'Pick any workout. Repeat one from this week, or log your own.'}</p><div class="pick">
  ${keys.map(k=>`<button data-fri="${k}" class="${k===nx?'on':''}"><b>${W[k].name}${k===nx?' · up next':''}${planned&&k===d?' · planned':''}</b><span>${W[k].min?W[k].min+' min':''}${W[k].video?' · video class':''}</span></button>`).join('')}
- <button data-fri="own"><b>Something else</b><span>A studio class, a run, a session from the app's library</span></button></div>
+ <button data-fri="own"><b>Something else</b><span>A studio class, a run, a session from the app's library</span></button>
+ ${rest?'':`<button data-fri="rest"><b>Rest day</b><span>Missed it or taking the day off. Marks this day as rest.</span></button>`}</div>
  ${rest?'<button class="big ghost" data-act="keeprest">Keep it a rest day</button>':planned?`<button class="big ghost" data-act="keeprest">Back to ${esc(W[d].name)}</button>`:''}`}
 function timing(i){
  if(Q.done[i]){const e=S.hist.find(x=>x.id===Q.doneId[i]);return e?`<p class="meta">Finished${e.dur?` in <b>${fmtDur(e.dur)}</b>`:''}${e.vol?' · '+Math.round(e.vol).toLocaleString()+' kg lifted':''}</p>`:''}
@@ -339,23 +340,24 @@ function histView(){
 function homeView(){
  const last=S.hist[0];
  let h=`<h2>Programs</h2><p class="meta">Pick the program you're doing. Your history keeps every program's workouts together.</p>`;
+ setTimeout(()=>{const v=document.getElementById('ver');if(v)v.textContent='App version 9'},0);
  if(last)h+=`<p class="meta">Last workout: <b>${new Date(last.date).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</b> · ${esc(last.name)}${last.dur?' · '+fmtDur(last.dur):''}</p>`;
  h+=`<div class="pick">`+Object.entries(PROGS).map(([id,pr])=>{
   if(pr.soon)return `<button disabled style="opacity:.55"><b>${pr.name}</b><span>${pr.desc}</span></button>`;
   const q=S.p[id]||blank(),dd=daysOf(id),plan=dd.filter(d=>d[1]).length,dn=Object.keys(q.done).length;
   const lp=lastIn(id);
   return `<button data-prog="${id}" class="${id===S.prog?'on':''}"><b>${pr.name}${id===S.prog?' · current':''}</b><span>${lp?'Last: '+dshort(lp.date)+' · '+esc(lp.name)+'<br>':''}${pr.desc}<br>${pr.weeks?'Week '+((S.pw[id]||0)+1)+' of '+pr.weeks.length+' · ':''}This week: ${dn} of ${plan} workouts done</span></button>`}).join('')+`</div>`;
- return h;
+ return h+'<p class="meta" id="ver" style="margin-top:24px;font-size:13px"></p>';
 }
 function render(){
  week();
  if(view==='hist'){document.getElementById('main').innerHTML=histView();return}
  if(view==='home'){document.getElementById('main').innerHTML=homeView();return}
  const k=DAYS[cur][1],p=Q.pick[cur];let h;
- if(p&&p!=='own')h=workout(cur,p);
+ if(picking)h=picker(cur);
+ else if(p&&p!=='own'&&p!=='rest')h=workout(cur,p);
  else if(p==='own')h=own(cur);
- else if(picking)h=picker(cur);
- else if(!k){const nx=DAYS.findIndex((d,j)=>j>cur&&d[1]);h=`<div class="restday"><h2>Rest day</h2><p>Recovery is when muscle actually gets built. Go for a walk, stretch, eat enough protein and sleep well.</p><button class="big" data-act="addw">+ Add a workout today</button>${nx>0?`<button class="big ghost" data-day="${nx}">Next up: ${DAYS[nx][0]}</button>`:''}</div>`}
+ else if(!k||p==='rest'){const nx=DAYS.findIndex((d,j)=>j>cur&&d[1]);h=`<div class="restday"><h2>Rest day</h2><p>Recovery is when muscle actually gets built. Go for a walk, stretch, eat enough protein and sleep well.</p><button class="big" data-act="addw">+ Add a workout today</button>${nx>0?`<button class="big ghost" data-day="${nx}">Next up: ${DAYS[nx][0]}</button>`:''}</div>`}
  else if(!k||k==='fri')h=picker(cur);
  else h=workout(cur,k);
  const pr=PROGS[S.prog];if(pr.weeks)h=`<div class="eq" style="margin:0 0 16px">${pr.weeks.map((_,n)=>`<button class="play" data-pw="${n}" style="${n===(S.pw[S.prog]||0)?'background:var(--red);border-color:var(--red);color:#fff':''}">Week ${n+1}</button>`).join('')}</div>`+h;
