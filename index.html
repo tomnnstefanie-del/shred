@@ -79,6 +79,9 @@ textarea{width:100%;min-height:140px;font:16px/1.5 Archivo,sans-serif;padding:12
 .timer button{height:44px;min-width:44px;border-radius:22px;border:2px solid var(--bg);background:transparent;color:var(--bg);font-weight:700;padding:0 12px}
 .timer.end{background:var(--red);color:#fff}.timer.end button{border-color:#fff;color:#fff}
 .ok{color:var(--red);font-weight:700}
+.nextc{background:var(--card);border-left:5px solid var(--red);border-radius:10px;padding:12px 14px;margin:0 0 18px;display:grid;gap:6px;justify-items:start}
+.nextc .d{font-size:14px;color:var(--mut)}.nextc .nx{font-size:17px}
+.play.on{background:var(--red);border-color:var(--red);color:#fff}
 .brand>span{display:flex;align-items:center;gap:10px}
 .hbtn{border:2px solid #fff;background:transparent;color:#fff;border-radius:18px;height:36px;padding:0 14px;font-size:13px;font-weight:800}
 .hbtn.on{background:#fff;color:var(--red)}
@@ -246,18 +249,31 @@ const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const fmtDur=s=>{const m=Math.max(1,Math.round(s/60)),h=Math.floor(m/60);return h?h+'h '+(m%60)+'min':m+'min'};
 const hm=t=>new Date(t).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const flex=i=>{const d=DAYS[i][1];return d==='fri'||!d};const keyOf=i=>flex(i)?(Q.pick[i]||null):DAYS[i][1];
+const flex=i=>{const d=DAYS[i][1];return d==='fri'||!d};const keyOf=i=>Q.pick[i]||(DAYS[i][1]==='fri'?null:DAYS[i][1]);
+const rot=()=>[...new Set(DAYS.map(d=>d[1]).filter(k=>k&&k!=='fri'))];
+const keyByName=n=>Object.keys(W).find(k=>W[k].name===n);
+const lastIn=id=>S.hist.find(e=>e.prog===PROGS[id].name);
+function upNext(){const r=rot(),l=lastIn(S.prog);if(!l)return r[0];const k=l.k||keyByName(l.name),ix=r.indexOf(k);return ix<0?r[0]:r[(ix+1)%r.length]}
+const dshort=d=>new Date(d).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
+function nextCard(i){
+ if(i!==todayIdx||Q.done[i])return '';
+ const l=lastIn(S.prog),nx=upNext(),now=keyOf(i);
+ let h=`<div class="nextc">${l?`<div class="d">Last workout: <b>${dshort(l.date)}</b> · ${esc(l.name)}${l.dur?' · '+fmtDur(l.dur):''}</div>`:`<div class="d">No ${esc(PROGS[S.prog].name)} workouts logged yet.</div>`}<div class="nx">Up next: <b>${esc(W[nx].name)}</b></div>`;
+ if(nx&&now!==nx)h+=`<button class="play on" data-go="${nx}">Do ${esc(SH(nx))} today</button>`;
+ else if(nx&&now===nx)h+=`<span class="ok">✓ That's today's workout</span>`;
+ return h+'</div>';
+}
 function prog(i){const k=keyOf(i);if(!k||k==='own'||!W[k])return null;let a=0,b=0;W[k].c.forEach((c,ci)=>c.it.forEach((x,ii)=>{b+=c.r;a+=Math.min(c.r,Q.ticks[i+'-'+ci+'-'+ii]||0)}));return b?a/b:0}
 function week(){
  document.getElementById('hb').classList.toggle('on',view==='hist');document.getElementById('pb').classList.toggle('on',view==='home');
  document.getElementById('ttl').textContent=view==='day'?PROGS[S.prog].name.toUpperCase():view==='hist'?'HISTORY':'STEF PROGRAMS';
  document.getElementById('week').style.display=view==='day'?'':'none';
-const lab=i=>{const d=DAYS[i][1];if(Q.done[i])return '✓ Done';if(!flex(i))return SH(d);const p=Q.pick[i];return p?SH(p):(d?'Free':'Rest')};
+const lab=i=>{const d=DAYS[i][1];if(Q.done[i])return '✓ Done';const p=Q.pick[i];if(p)return SH(p);return d==='fri'?'Free':d?SH(d):'Rest'};
  document.getElementById('week').innerHTML=DAYS.map(([d,k],i)=>`<button class="dy ${view==='day'&&i===cur?'on':''} ${!k&&!Q.pick[i]?'rest':''} ${i===todayIdx?'today':''}" data-day="${i}" aria-pressed="${view==='day'&&i===cur}"><b>${d}</b><i>${lab(i)}</i></button>`).join('');
 }
 function workout(i,k){
  const w=W[k],p=prog(i)||0;
- let h=`<h2>${w.name}</h2><p class="meta">${w.min?w.min+' min · ':''}${w.c.length?w.c.length+' circuits':w.video?'Studio video class':'Exercises not added yet'}${flex(i)?' · <button class="play" data-act="refri">Change</button>':''}</p>
+ let h=`<h2>${w.name}</h2><p class="meta">${w.min?w.min+' min · ':''}${w.c.length?w.c.length+' circuits':w.video?'Studio video class':'Exercises not added yet'} · <button class="play" data-act="refri">Change</button></p>
  ${timing(i)}
  <div class="bar"><span style="width:${Math.round(p*100)}%"></span></div><div class="pct"><span>${Math.round(p*100)}% done</span><span>${Q.done[i]?'<span class="ok">✓ Finished</span>':''}</span></div>
  <div class="eq">${w.eq.map(e=>`<span>${e}</span>`).join('')}</div>
@@ -283,11 +299,11 @@ function own(i){return `<h2>${FULL[i]} – your own session</h2><p class="meta">
  ${Q.done[i]?'':`<label class="mins">How long? <input id="fm" inputmode="numeric" value="${esc(Q.mins[i]||'')}" placeholder="min"> minutes</label>`}
  <textarea id="fn" placeholder="e.g. 35 min Pyro sculpt class, or a run">${esc(Q.notes[i]||'')}</textarea>
  <button class="big" data-act="finish">${Q.done[i]?'✓ Finished – tap to undo':'Finish workout'}</button>`}
-function picker(i){const rest=!DAYS[i][1];
- return `<h2>${rest?'Add a workout to '+FULL[i]:FULL[i]+' – your choice'}</h2><p class="meta">Pick any workout. Repeat one from this week, or log your own.</p><div class="pick">
- ${Object.keys(W).map(k=>`<button data-fri="${k}"><b>${W[k].name}</b><span>${W[k].min?W[k].min+' min':''}</span></button>`).join('')}
+function picker(i){const d=DAYS[i][1],rest=!d,planned=d&&d!=='fri',nx=upNext(),r=rot(),keys=[...r,...Object.keys(W).filter(k=>!r.includes(k))];
+ return `<h2>${rest?'Add a workout to '+FULL[i]:planned?'Swap '+FULL[i]+"'s workout":FULL[i]+' – your choice'}</h2><p class="meta">${planned?'Missed a day? Pick the one you want to do today.':'Pick any workout. Repeat one from this week, or log your own.'}</p><div class="pick">
+ ${keys.map(k=>`<button data-fri="${k}" class="${k===nx?'on':''}"><b>${W[k].name}${k===nx?' · up next':''}${planned&&k===d?' · planned':''}</b><span>${W[k].min?W[k].min+' min':''}${W[k].video?' · video class':''}</span></button>`).join('')}
  <button data-fri="own"><b>Something else</b><span>A studio class, a run, a session from the app's library</span></button></div>
- ${rest?'<button class="big ghost" data-act="keeprest">Keep it a rest day</button>':''}`}
+ ${rest?'<button class="big ghost" data-act="keeprest">Keep it a rest day</button>':planned?`<button class="big ghost" data-act="keeprest">Back to ${esc(W[d].name)}</button>`:''}`}
 function timing(i){
  if(Q.done[i]){const e=S.hist.find(x=>x.id===Q.doneId[i]);return e?`<p class="meta">Finished${e.dur?` in <b>${fmtDur(e.dur)}</b>`:''}${e.vol?' · '+Math.round(e.vol).toLocaleString()+' kg lifted':''}</p>`:''}
  if(Q.start[i])return `<p class="meta">Started ${hm(Q.start[i])} · <b id="elt">${fmtDur((Date.now()-Q.start[i])/1000)}</b> so far</p>`;
@@ -299,7 +315,7 @@ function finish(i){
  if(k==='own'||!W[k]||!W[k].c.length){name=W[k]?W[k].name:'Own session';dur=(parseFloat(Q.mins[i])||0)*60||(Q.start[i]?(end-Q.start[i])/1000:0)}
  else{name=W[k].name;dur=Q.start[i]?(end-Q.start[i])/1000:0;
   W[k].c.forEach((c,ci)=>c.it.forEach((x,ii)=>{const n=Math.min(c.r,Q.ticks[i+'-'+ci+'-'+ii]||0);if(c.r>1&&x.r){sets+=n;vol+=n*x.r*(parseFloat(S.kg[x.n])||0)}}))}
- const e={id:end,date:new Date(end).toISOString(),day:i,prog:PROGS[S.prog].name,name,dur:Math.round(dur),sets,vol,note:k==='own'?(Q.notes[i]||''):''};
+ const e={id:end,date:new Date(end).toISOString(),day:i,prog:PROGS[S.prog].name,k,name,dur:Math.round(dur),sets,vol,note:k==='own'?(Q.notes[i]||''):''};
  S.hist.unshift(e);Q.done[i]=e.date;Q.doneId[i]=e.id;
 }
 function histView(){
@@ -327,7 +343,8 @@ function homeView(){
  h+=`<div class="pick">`+Object.entries(PROGS).map(([id,pr])=>{
   if(pr.soon)return `<button disabled style="opacity:.55"><b>${pr.name}</b><span>${pr.desc}</span></button>`;
   const q=S.p[id]||blank(),dd=daysOf(id),plan=dd.filter(d=>d[1]).length,dn=Object.keys(q.done).length;
-  return `<button data-prog="${id}" class="${id===S.prog?'on':''}"><b>${pr.name}${id===S.prog?' · current':''}</b><span>${pr.desc}<br>${pr.weeks?'Week '+((S.pw[id]||0)+1)+' of '+pr.weeks.length+' · ':''}This week: ${dn} of ${plan} workouts done</span></button>`}).join('')+`</div>`;
+  const lp=lastIn(id);
+  return `<button data-prog="${id}" class="${id===S.prog?'on':''}"><b>${pr.name}${id===S.prog?' · current':''}</b><span>${lp?'Last: '+dshort(lp.date)+' · '+esc(lp.name)+'<br>':''}${pr.desc}<br>${pr.weeks?'Week '+((S.pw[id]||0)+1)+' of '+pr.weeks.length+' · ':''}This week: ${dn} of ${plan} workouts done</span></button>`}).join('')+`</div>`;
  return h;
 }
 function render(){
@@ -337,10 +354,12 @@ function render(){
  const k=DAYS[cur][1],p=Q.pick[cur];let h;
  if(p&&p!=='own')h=workout(cur,p);
  else if(p==='own')h=own(cur);
- else if(!k&&!picking){const nx=DAYS.findIndex((d,j)=>j>cur&&d[1]);h=`<div class="restday"><h2>Rest day</h2><p>Recovery is when muscle actually gets built. Go for a walk, stretch, eat enough protein and sleep well.</p><button class="big" data-act="addw">+ Add a workout today</button>${nx>0?`<button class="big ghost" data-day="${nx}">Next up: ${DAYS[nx][0]}</button>`:''}</div>`}
+ else if(picking)h=picker(cur);
+ else if(!k){const nx=DAYS.findIndex((d,j)=>j>cur&&d[1]);h=`<div class="restday"><h2>Rest day</h2><p>Recovery is when muscle actually gets built. Go for a walk, stretch, eat enough protein and sleep well.</p><button class="big" data-act="addw">+ Add a workout today</button>${nx>0?`<button class="big ghost" data-day="${nx}">Next up: ${DAYS[nx][0]}</button>`:''}</div>`}
  else if(!k||k==='fri')h=picker(cur);
  else h=workout(cur,k);
  const pr=PROGS[S.prog];if(pr.weeks)h=`<div class="eq" style="margin:0 0 16px">${pr.weeks.map((_,n)=>`<button class="play" data-pw="${n}" style="${n===(S.pw[S.prog]||0)?'background:var(--red);border-color:var(--red);color:#fff':''}">Week ${n+1}</button>`).join('')}</div>`+h;
+ h=nextCard(cur)+h;
  h+=`<button class="big ghost" data-act="reset">Reset this week's ticks</button>`;
  document.getElementById('main').innerHTML=h;
 }
@@ -362,9 +381,10 @@ document.body.addEventListener('click',e=>{
  if(b.dataset.del){if(b.dataset.sure){const id=+b.dataset.del;S.hist=S.hist.filter(x=>x.id!==id);Object.keys(Q.doneId).forEach(d=>{if(Q.doneId[d]===id){delete Q.doneId[d];delete Q.done[d]}});save();render()}else{b.dataset.sure=1;b.textContent='Tap again to remove'}return}
  if(b.dataset.pw!==undefined){S.pw[S.prog]=+b.dataset.pw;S.p[S.prog]=blank();useProg(S.prog);picking=false;save();render();return}
  if(b.dataset.prog){useProg(b.dataset.prog);view='day';cur=todayIdx;picking=false;save();render();scrollTo(0,0);return}
+ if(b.dataset.go){Q.pick[cur]=b.dataset.go;picking=false;save();render();scrollTo(0,0);return}
  if(b.dataset.fri){Q.pick[cur]=b.dataset.fri;picking=false;save();render();return}
  const a=b.dataset.act;
- if(a==='refri'){Object.keys(Q.ticks).forEach(t=>{if(t.startsWith(cur+'-'))delete Q.ticks[t]});delete Q.pick[cur];if(Q.done[cur])finish(cur);delete Q.start[cur];picking=!!DAYS[cur][1]||false;save();render()}
+ if(a==='refri'){Object.keys(Q.ticks).forEach(t=>{if(t.startsWith(cur+'-'))delete Q.ticks[t]});delete Q.pick[cur];if(Q.done[cur])finish(cur);delete Q.start[cur];picking=true;save();render()}
  if(a==='addw'){picking=true;render()}
  if(a==='keeprest'){picking=false;render()}
  if(a==='finish'){finish(cur);save();render()}
